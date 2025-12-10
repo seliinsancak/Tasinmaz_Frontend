@@ -1,0 +1,58 @@
+<div class="card p-3">
+  <form [formGroup]="tasinmazForm" (ngSubmit)="submitForm()">
+    <div class="row mb-2">
+      <div class="col">
+        <input type="text" class="form-control" placeholder="Adı" formControlName="adi">
+      </div>
+      <div class="col">
+        <input type="number" class="form-control" placeholder="İl ID" formControlName="ilId">
+      </div>
+      <div class="col">
+        <input type="number" class="form-control" placeholder="İlçe ID" formControlName="ilceId">
+      </div>
+      <div class="col">
+        <input type="number" class="form-control" placeholder="Mahalle ID" formControlName="mahalleId">
+      </div>
+      <div class="col">
+        <input type="number" class="form-control" placeholder="Fiyat" formControlName="fiyat">
+      </div>
+      <div class="col">
+        <input type="text" class="form-control" placeholder="Durum" formControlName="durum">
+      </div>
+      <div class="col-auto">
+        <button class="btn btn-primary" type="submit">{{ editingTasinmazId ? 'Güncelle' : 'Ekle' }}</button>
+        <button class="btn btn-secondary" type="button" (click)="cancelEdit()" *ngIf="editingTasinmazId">İptal</button>
+      </div>
+    </div>
+  </form>
+
+  <table class="table table-striped mt-3">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Adı</th>
+        <th>İl ID</th>
+        <th>İlçe ID</th>
+        <th>Mahalle ID</th>
+        <th>Fiyat</th>
+        <th>Durum</th>
+        <th>İşlemler</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let t of tasinmazlar">
+        <td>{{ t.id }}</td>
+        <td>{{ t.adi }}</td>
+        <td>{{ t.ilId }}</td>
+        <td>{{ t.ilceId }}</td>
+        <td>{{ t.mahalleId }}</td>
+        <td>{{ t.fiyat }}</td>
+        <td>{{ t.durum }}</td>
+        <td>
+          <button class="btn btn-sm btn-warning me-1" (click)="editTasinmaz(t)">Düzenle</button>
+          <button class="btn btn-sm btn-danger" (click)="deleteTasinmaz(t.id!)">Sil</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
