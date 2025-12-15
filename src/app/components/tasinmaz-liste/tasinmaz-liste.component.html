@@ -1,56 +1,63 @@
-<div class="card p-3">
-  <form [formGroup]="tasinmazForm" (ngSubmit)="submitForm()">
-    <div class="row mb-2">
-      <div class="col">
-        <input type="text" class="form-control" placeholder="Adı" formControlName="adi">
-      </div>
-      <div class="col">
-        <input type="number" class="form-control" placeholder="İl ID" formControlName="ilId">
-      </div>
-      <div class="col">
-        <input type="number" class="form-control" placeholder="İlçe ID" formControlName="ilceId">
-      </div>
-      <div class="col">
-        <input type="number" class="form-control" placeholder="Mahalle ID" formControlName="mahalleId">
-      </div>
-      <div class="col">
-        <input type="number" class="form-control" placeholder="Fiyat" formControlName="fiyat">
-      </div>
-      <div class="col">
-        <input type="text" class="form-control" placeholder="Durum" formControlName="durum">
-      </div>
-      <div class="col-auto">
-        <button class="btn btn-primary" type="submit">{{ editingTasinmazId ? 'Güncelle' : 'Ekle' }}</button>
-        <button class="btn btn-secondary" type="button" (click)="cancelEdit()" *ngIf="editingTasinmazId">İptal</button>
-      </div>
-    </div>
-  </form>
+<div class="container mt-3">
+  <div class="d-flex justify-content-between mb-2">
+    <button class="btn btn-primary" (click)="openAdd()">Taşınmaz Ekle</button>
+  </div>
 
-  <table class="table table-striped mt-3">
+  <!-- Form Modal / Inline Form -->
+  <div *ngIf="showForm" class="card p-3 mb-3">
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="row g-2">
+        <div class="col">
+          <input type="text" class="form-control" placeholder="Ada" formControlName="ada">
+        </div>
+        <div class="col">
+          <input type="text" class="form-control" placeholder="Parsel" formControlName="parsel">
+        </div>
+        <div class="col">
+          <input type="text" class="form-control" placeholder="Nitelik" formControlName="nitelik">
+        </div>
+        <div class="col">
+          <input type="text" class="form-control" placeholder="Adres" formControlName="adres">
+        </div>
+        <div class="col">
+          <input type="number" class="form-control" placeholder="Mahalle ID" formControlName="mahalleId">
+        </div>
+      </div>
+      <div class="mt-2">
+        <button class="btn btn-success" type="submit">{{ editId ? 'Güncelle' : 'Ekle' }}</button>
+        <button class="btn btn-secondary" type="button" (click)="showForm = false">İptal</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Taşınmaz Tablosu -->
+  <table class="table table-bordered">
     <thead>
       <tr>
         <th>ID</th>
-        <th>Adı</th>
-        <th>İl ID</th>
-        <th>İlçe ID</th>
-        <th>Mahalle ID</th>
-        <th>Fiyat</th>
-        <th>Durum</th>
+        <th>Ada</th>
+        <th>Parsel</th>
+        <th>Nitelik</th>
+        <th>Adres</th>
+        <th>Mahalle</th>
+        <th>İlçe</th>
+        <th>İl</th>
         <th>İşlemler</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let t of tasinmazlar">
         <td>{{ t.id }}</td>
-        <td>{{ t.adi }}</td>
-        <td>{{ t.ilId }}</td>
-        <td>{{ t.ilceId }}</td>
-        <td>{{ t.mahalleId }}</td>
-        <td>{{ t.fiyat }}</td>
-        <td>{{ t.durum }}</td>
+        <td>{{ t.ada }}</td>
+        <td>{{ t.parsel }}</td>
+        <td>{{ t.nitelik }}</td>
+        <td>{{ t.adres }}</td>
+        <td>{{ t.mahalle }}</td>
+        <td>{{ t.ilce }}</td>
+        <td>{{ t.il }}</td>
         <td>
-          <button class="btn btn-sm btn-warning me-1" (click)="editTasinmaz(t)">Düzenle</button>
-          <button class="btn btn-sm btn-danger" (click)="deleteTasinmaz(t.id!)">Sil</button>
+          <button class="btn btn-warning btn-sm me-1" (click)="openEdit(t)">Düzenle</button>
+          <button class="btn btn-danger btn-sm" (click)="delete(t.id)">Sil</button>
         </td>
       </tr>
     </tbody>

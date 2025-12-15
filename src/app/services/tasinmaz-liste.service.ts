@@ -1,34 +1,47 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Tasinmaz } from '../models/Tasinmaz';
+
+export interface Tasinmaz {
+  id: number;
+  ada: string;
+  parsel: string;
+  nitelik?: string;
+  adres?: string;
+  mahalle: string;
+  ilce: string;
+  il: string;
+}
+
+export interface TasinmazEkleDTO {
+  ada: string;
+  parsel: string;
+  nitelik?: string;
+  adres?: string;
+  mahalleId: number;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class TasinmazListeService {
+  private apiUrl = 'https://localhost:7190/api/Tasinmaz'; // backend URL
 
-  private apiUrl = 'https://localhost:7190/api/Tasinmaz'; // Backend URL
+  constructor(private http: HttpClient) {}
 
-  constructor(private http: HttpClient) { }
-
-  // Tüm taşınmazları getir
-  getAllTasinmazlar(): Observable<Tasinmaz[]> {
+  getAll(): Observable<Tasinmaz[]> {
     return this.http.get<Tasinmaz[]>(this.apiUrl);
   }
 
-  // Yeni taşınmaz ekle
-  addTasinmaz(tasinmaz: Omit<Tasinmaz, 'id'>): Observable<Tasinmaz> {
-    return this.http.post<Tasinmaz>(this.apiUrl, tasinmaz);
+  add(dto: TasinmazEkleDTO): Observable<any> {
+    return this.http.post(this.apiUrl, dto);
   }
 
-  // Taşınmaz güncelle
-  updateTasinmaz(tasinmaz: Tasinmaz): Observable<void> {
-    return this.http.put<void>(`${this.apiUrl}/${tasinmaz.id}`, tasinmaz);
+  update(id: number, dto: TasinmazEkleDTO): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}`, dto);
   }
 
-  // Taşınmaz sil
-  deleteTasinmaz(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  delete(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`);
   }
 }

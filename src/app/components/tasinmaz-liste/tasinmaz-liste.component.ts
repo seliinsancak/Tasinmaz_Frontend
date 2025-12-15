@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, FormGroup, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Tasinmaz } from '../../models/Tasinmaz';
-import { TasinmazListeService } from '../../services/tasinmaz-liste.service';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Tasinmaz, TasinmazListeService, TasinmazEkleDTO } from '../../services/tasinmaz-liste.service';
 
 @Component({
   selector: 'app-tasinmaz-liste',
@@ -13,17 +12,17 @@ import { TasinmazListeService } from '../../services/tasinmaz-liste.service';
 })
 export class TasinmazListeComponent implements OnInit {
   tasinmazlar: Tasinmaz[] = [];
-  tasinmazForm: FormGroup;
-  editingTasinmazId: number | null = null;
+  form: FormGroup;
+  editId: number | null = null;
+  showForm = false;
 
-  constructor(private fb: FormBuilder, private tasinmazService: TasinmazListeService) {
-    this.tasinmazForm = this.fb.group({
-      adi: ['', Validators.required],
-      ilId: [0, Validators.required],
-      ilceId: [0, Validators.required],
-      mahalleId: [0, Validators.required],
-      fiyat: [0, Validators.required],
-      durum: ['', Validators.required]
+  constructor(private service: TasinmazListeService, private fb: FormBuilder) {
+    this.form = this.fb.group({
+      ada: ['', Validators.required],
+      parsel: ['', Validators.required],
+      nitelik: [''],
+      adres: [''],
+      mahalleId: [null, Validators.required]
     });
   }
 
@@ -31,41 +30,50 @@ export class TasinmazListeComponent implements OnInit {
     this.loadTasinmazlar();
   }
 
-  loadTasinmazlar(): void {
-    this.tasinmazService.getAllTasinmazlar().subscribe(data => this.tasinmazlar = data);
+  loadTasinmazlar() {
+    this.service.getAll().subscribe((res: Tasinmaz[]) => {
+      this.tasinmazlar = res;
+    });
   }
 
-  submitForm(): void {
-    const formValue = this.tasinmazForm.value as Omit<Tasinmaz, 'id'>;
+  openAdd() {
+    this.showForm = true;
+    this.editId = null;
+    this.form.reset();
+  }
 
-    if (this.editingTasinmazId != null) {
-      const updated: Tasinmaz = { id: this.editingTasinmazId, ...formValue };
-      this.tasinmazService.updateTasinmaz(updated).subscribe(() => {
+  openEdit(t: Tasinmaz) {
+    this.showForm = true;
+    this.editId = t.id;
+    this.form.patchValue({
+      ada: t.ada,
+      parsel: t.parsel,
+      nitelik: t.nitelik,
+      adres: t.adres,
+      mahalleId: 0 // TODO: backend’den MahalleId alınacak
+    });
+  }
+
+  submit() {
+    const dto: TasinmazEkleDTO = this.form.value;
+    if (this.editId) {
+      this.service.update(this.editId, dto).subscribe(() => {
         this.loadTasinmazlar();
-        this.tasinmazForm.reset();
-        this.editingTasinmazId = null;
+        this.showForm = false;
       });
     } else {
-      this.tasinmazService.addTasinmaz(formValue).subscribe(() => {
+      this.service.add(dto).subscribe(() => {
         this.loadTasinmazlar();
-        this.tasinmazForm.reset();
+        this.showForm = false;
       });
     }
   }
 
-  editTasinmaz(t: Tasinmaz): void {
-    this.editingTasinmazId = t.id ?? null;
-    this.tasinmazForm.patchValue(t);
-  }
-
-  deleteTasinmaz(id: number): void {
-    if (confirm('Bu taşınmazı silmek istediğinizden emin misiniz?')) {
-      this.tasinmazService.deleteTasinmaz(id).subscribe(() => this.loadTasinmazlar());
+  delete(id: number) {
+    if (confirm('Silmek istediğinize emin misiniz?')) {
+      this.service.delete(id).subscribe(() => {
+        this.loadTasinmazlar();
+      });
     }
-  }
-
-  cancelEdit(): void {
-    this.editingTasinmazId = null;
-    this.tasinmazForm.reset();
   }
 }

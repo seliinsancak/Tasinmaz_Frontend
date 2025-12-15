@@ -1,9 +1,9 @@
 export interface Tasinmaz {
-  id?: number;
-  adi: string;
-  ilId: number;
-  ilceId: number;
-  mahalleId: number;
-  fiyat: number;
-  durum: string;
+  id: number;
+  ada: string;
+  parsel: string;
+  nitelik: string;
+  il: string;
+  ilce: string;
+  mahalle: string;
 }
